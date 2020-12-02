@@ -1,7 +1,3 @@
-from os import chdir
-
-chdir("C:\\Users\\bwidla\\Documents\\Inne\\CS\\Advent_of_Code_2020\\01")
-
 print("Day 1 of Advent of Code!")
 
 def find_multiple_twos(n, target):
