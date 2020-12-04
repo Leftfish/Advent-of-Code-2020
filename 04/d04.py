@@ -1,8 +1,3 @@
-from os import chdir
-day = "04"
-chdir("C:\\Users\\bwidla\\Documents\\Inne\\CS\\Advent_of_Code_2020\\{}".format(day))
-print("Day {} of Advent of Code!".format(day))
-
 import re
 
 def is_valid_entry(entry, oblig_fields):
