@@ -11,19 +11,20 @@ def create_passport(line, year_fields):
         passport[k] = v
     return passport
 
-def validate_passport(passport, year_fields, eye_colors, heights):
+def validate_passport(passport, year_fields, eye_field, passport_id_field, hair_color_field, height_field):
     for k in passport:
         entry = passport[k]
         if k in year_fields and not (year_fields[k][1] >= entry >= year_fields[k][0]):
             return False
-        if k == 'ecl' and entry not in eye_colors:
+        if k in eye_field and entry not in eye_field[k]:
             return False 
-        if k == 'pid' and not re.fullmatch(r'\d{9}', entry):
+        if k in passport_id_field and not re.fullmatch(passport_id_field[k], entry):
             return False
-        if k == 'hcl' and not re.fullmatch(r'#[0-9 a-f]{6}', entry):
+        if k in hair_color_field and not re.fullmatch(hair_color_field[k], entry):
             return False
-        if k == 'hgt':
+        if k in height_field:
             unit = entry[-2:]
+            heights = height_field[k]
             if unit not in heights:
                 return False
             else:
@@ -33,21 +34,23 @@ def validate_passport(passport, year_fields, eye_colors, heights):
                     return False
     return True
 
-def validate_batch(entries, oblig_fields, year_fields, eye_colors, heights):
-    has_fields = 0
+def validate_batch(entries, oblig_fields, year_fields, eye_field, passport_id_field, hair_color_field, height_field):
+    has_required_fields = 0
     valid = 0
     for entry in entries:
         if is_valid_entry(entry, oblig_fields):
-            has_fields += 1
+            has_required_fields += 1
             passport = create_passport(entry, year_fields)
-            if validate_passport(passport, year_fields, eye_colors, heights):
+            if validate_passport(passport, year_fields, eye_field, passport_id_field, hair_color_field, height_field):
                 valid += 1
-    return has_fields, valid
+    return has_required_fields, valid
 
 OBLIG_FIELDS = ('byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid')
 YEAR_FIELDS = {'byr': (1920, 2002), 'iyr': (2010, 2020), 'eyr': (2020, 2030)}
-EYE_COLORS = ('amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth')
-HEIGHTS = {'in': (59, 76), 'cm': (150, 193)}
+EYE_FIELD = {'ecl': ('amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth')}
+HEIGHT_FIELD = {'hgt': {'in': (59, 76), 'cm': (150, 193)}}
+HAIR_COLOR_FIELD = {'hcl': r'#[0-9a-f]{6}'}
+PASSPORT_ID_FIELD = {'pid': r'\d{9}'}
 OPTIONAL_FIELDS = ('cid')
 
 bad_test_passports = '''eyr:1972 cid:100
@@ -78,11 +81,11 @@ eyr:2022
 iyr:2010 hgt:158cm hcl:#b6652a ecl:blu byr:1944 eyr:2021 pid:093154719'''
 
 print("Tests...")
-print("Bad passports OK:", validate_batch(bad_test_passports.split('\n\n'), OBLIG_FIELDS, YEAR_FIELDS, EYE_COLORS, HEIGHTS)[1] == 0)
-print("Good passports OK:", validate_batch(good_test_passports.split('\n\n'), OBLIG_FIELDS, YEAR_FIELDS, EYE_COLORS, HEIGHTS)[1] == len(good_test_passports.split('\n\n')))
+print("Bad passports OK:", validate_batch(bad_test_passports.split('\n\n'), OBLIG_FIELDS, YEAR_FIELDS, EYE_FIELD, PASSPORT_ID_FIELD, HAIR_COLOR_FIELD, HEIGHT_FIELD)[1] == 0)
+print("Good passports OK:", validate_batch(good_test_passports.split('\n\n'), OBLIG_FIELDS, YEAR_FIELDS, EYE_FIELD, PASSPORT_ID_FIELD, HAIR_COLOR_FIELD, HEIGHT_FIELD)[1] == len(good_test_passports.split('\n\n')))
 
 with open("input", mode = 'r') as inp:
     print("Solution...")
     entries = inp.read().split('\n\n')
-    results = validate_batch(entries, OBLIG_FIELDS, YEAR_FIELDS, EYE_COLORS, HEIGHTS)
+    results = validate_batch(entries, OBLIG_FIELDS, YEAR_FIELDS, EYE_FIELD, PASSPORT_ID_FIELD, HAIR_COLOR_FIELD, HEIGHT_FIELD)
     print("{} have required fields, {} are valid.".format(*results))
