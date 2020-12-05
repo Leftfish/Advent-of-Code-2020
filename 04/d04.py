@@ -1,4 +1,6 @@
+import turtle
 import re
+from time import sleep
 
 print("Day 4 of Advent of Code!")
 
@@ -38,14 +40,14 @@ def validate_passport(passport, year_fields, eye_field, passport_id_field, hair_
 
 def validate_batch(entries, oblig_fields, year_fields, eye_field, passport_id_field, hair_color_field, height_field):
     has_required_fields = 0
-    valid = 0
+    valid_passports = []
     for entry in entries:
         if is_valid_entry(entry, oblig_fields):
             has_required_fields += 1
             passport = create_passport(entry, year_fields)
             if validate_passport(passport, year_fields, eye_field, passport_id_field, hair_color_field, height_field):
-                valid += 1
-    return has_required_fields, valid
+                valid_passports.append(passport)
+    return has_required_fields, valid_passports
 
 OBLIG_FIELDS = ('byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid')
 YEAR_FIELDS = {'byr': (1920, 2002), 'iyr': (2010, 2020), 'eyr': (2020, 2030)}
@@ -83,12 +85,103 @@ eyr:2022
 iyr:2010 hgt:158cm hcl:#b6652a ecl:blu byr:1944 eyr:2021 pid:093154719'''
 
 print("Tests...")
-print("Bad passports OK:", validate_batch(bad_test_passports.split('\n\n'), OBLIG_FIELDS, YEAR_FIELDS, EYE_FIELD, PASSPORT_ID_FIELD, HAIR_COLOR_FIELD, HEIGHT_FIELD)[1] == 0)
-print("Good passports OK:", validate_batch(good_test_passports.split('\n\n'), OBLIG_FIELDS, YEAR_FIELDS, EYE_FIELD, PASSPORT_ID_FIELD, HAIR_COLOR_FIELD, HEIGHT_FIELD)[1] == len(good_test_passports.split('\n\n')))
+print("Bad passports OK:", len(validate_batch(bad_test_passports.split('\n\n'), OBLIG_FIELDS, YEAR_FIELDS, EYE_FIELD, PASSPORT_ID_FIELD, HAIR_COLOR_FIELD, HEIGHT_FIELD)[1]) == 0)
+print("Good passports OK:", len(validate_batch(good_test_passports.split('\n\n'), OBLIG_FIELDS, YEAR_FIELDS, EYE_FIELD, PASSPORT_ID_FIELD, HAIR_COLOR_FIELD, HEIGHT_FIELD)[1]) == len(good_test_passports.split('\n\n')))
 print("---------------------")
+ 
+def draw_person(t, passport):
+    eye_color = {'amb': '#FFBF00', 'blu': '#0000FF', 'brn': '#b86e07', 'gry': '#8f8b85', 'grn': '#00FF00', 'hzl': '#8e7618', 'oth': '#ff0000'}
+    t.goto(-80, 120)
+    t.clear()
+    t.setheading(0)
+    fwd, r, l, up, dwn = t.forward, t.right, t.left, t.penup, t.pendown
+    # Face
+    t.fillcolor(passport['hcl'])
+    t.begin_fill()
+    for _ in range(4):
+        fwd(160)
+        r(90)
+    t.end_fill()
+    up()
+    # Go to eyes
+    fwd(40)
+    r(90)
+    fwd(40)
+    # Eyes
+    dwn()
+    t.fillcolor(eye_color[passport['ecl']])
+    t.begin_fill()
+    for _ in range(4):
+        fwd(20)
+        l(90)
+    t.end_fill()
+    up()
+    l(90)
+    fwd(60)
+    dwn()
+    t.begin_fill()
+    for _ in range(4):
+        fwd(20)
+        r(90)
+    t.end_fill()
+    up()
+    # Transfer to mouth
+    fwd(20)
+    r(90)
+    fwd(60)
+    l(90)
+    # Mouth
+    dwn()
+    t.fillcolor("#000000")
+    t.begin_fill()
+    mouth = [(fwd, 20), (r, 90), (fwd, 20), (r, 90), (fwd, 20), (l, 90), (fwd, 20), (r, 90), (fwd, 80), (r, 90), (fwd, 20), (l, 90), (fwd, 20), (r, 90), (fwd, 20), (r, 90), (fwd, 100)]
+    for mv in mouth:
+        mv[0](mv[1])
+    t.end_fill()
+    t.fillcolor("#FF0000")
+    up()
+    # Tongue
+    tongue = [(r, 90), (fwd, 20), (r, 90), (fwd, 35)]
+    for mv in tongue:
+        mv[0](mv[1])
+    dwn()
+    t.begin_fill()
+    fwd(35)
+    r(90)
+    fwd(10)
+    r(90)
+    fwd(35)
+    r(90)
+    fwd(10)
+    t.end_fill()
+    up()
+    # Write information
+    t.goto(t.xcor()-80, t.ycor()-60)
+    t.write("Year of birth: {}".format(passport['byr']))
+    t.goto(t.xcor(), t.ycor()-15)
+    t.write("Passport issued in: {}".format(passport['iyr']))
+    t.goto(t.xcor(), t.ycor()-15)
+    t.write("Passport valid until: {}".format(passport['eyr']))
+    t.goto(t.xcor(), t.ycor()-15)
+    t.write("Passport ID: {}".format(passport['pid']))
+    t.goto(t.xcor(), t.ycor()-15)
+    t.write("Height: {} {}".format(passport['hgt'][:-2], passport['hgt'][-2:]))
+
+def animate_passports(valid_passports):
+    t = turtle.Turtle()
+    s = turtle.Screen()
+    s.setup(width=420, height=420)
+    s.title("Day 4 of Advent of Code 2020!")
+    t.speed(0)
+    t.hideturtle()
+    for passp in valid_passports:
+        draw_person(t, passp)
+        sleep(2)
+    s.exitonclick()
 
 with open("input", mode = 'r') as inp:
     print("Solution...")
     entries = inp.read().split('\n\n')
-    results = validate_batch(entries, OBLIG_FIELDS, YEAR_FIELDS, EYE_FIELD, PASSPORT_ID_FIELD, HAIR_COLOR_FIELD, HEIGHT_FIELD)
-    print("{} have required fields, {} are valid.".format(*results))
+    has_fields, valid_passports = validate_batch(entries, OBLIG_FIELDS, YEAR_FIELDS, EYE_FIELD, PASSPORT_ID_FIELD, HAIR_COLOR_FIELD, HEIGHT_FIELD)
+    print("{} have required fields, {} are valid.".format(has_fields, len(valid_passports)))
+    animate_passports(valid_passports)
