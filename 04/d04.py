@@ -1,6 +1,7 @@
 import turtle
 import re
 from time import sleep
+from random import choice
 
 print("Day 4 of Advent of Code!")
 
@@ -90,71 +91,67 @@ print("Good passports OK:", len(validate_batch(good_test_passports.split('\n\n')
 print("---------------------")
  
 def draw_person(t, passport):
-    eye_color = {'amb': '#FFBF00', 'blu': '#0000FF', 'brn': '#b86e07', 'gry': '#8f8b85', 'grn': '#00FF00', 'hzl': '#8e7618', 'oth': '#ff0000'}
-    t.goto(-80, 120)
+    def execute_moves(moves):
+        for mv in moves:
+            mv[0](mv[1]) if mv[1] else mv[0]()
+
+    def draw_eye():
+        t.fillcolor(eye_color)
+        t.begin_fill()
+        for _ in range(4):
+            fwd(20)
+            r(90)
+        t.end_fill()
+    
+    eye_palette = {'amb': '#FFBF00', 'blu': '#0000FF', 'brn': '#b86e07', 'gry': '#8f8b85', 'grn': '#32cd32', 'hzl': '#8e7618', 'oth': '#ff0000'}
+    eye_color = eye_palette[passport['ecl']]
+    hair_size = choice(range(5, 35))
+    hair_color = passport['hcl']
+    mouth_color = '#000000'
+    tongue_color = '#FF0000'
+    skin_tone = choice(['#fdf5e2', '#fbefba', '#ffd6a4', '#c68642', '#4b3932'])
+    height_data = passport['hgt']
+    
+    if height_data.endswith('cm'):
+        height = '{} cm ({} in)'.format(height_data[:-2], int(int(height_data[:-2]) / 2.54))
+    else:
+        height = '{} cm ({} in)'.format(int(int(height_data[:-2]) * 2.54), height_data[:-2])
+    
+    fwd, r, l, = t.forward, t.right, t.left
+
+    # Set up
     t.clear()
+    t.penup()
+    t.goto(-80, 120)
     t.setheading(0)
-    fwd, r, l, up, dwn = t.forward, t.right, t.left, t.penup, t.pendown
     # Face
-    t.fillcolor(passport['hcl'])
+    t.fillcolor(skin_tone)
     t.begin_fill()
     for _ in range(4):
         fwd(160)
         r(90)
     t.end_fill()
-    up()
-    # Go to eyes
-    fwd(40)
-    r(90)
-    fwd(40)
+    # Hair
+    hair = [(t.begin_fill, None), (t.fillcolor, hair_color), (fwd, 160), (r, 90), (fwd, hair_size), (r, 90), (fwd, 160), (r, 90), (fwd, hair_size), (t.end_fill, None)]
+    execute_moves(hair)
+    t.setheading(0)
+    # Transfer to eyes
+    transfer_eyes = [(fwd, 40), (r, 90), (fwd, 40)]
+    execute_moves(transfer_eyes)
     # Eyes
-    dwn()
-    t.fillcolor(eye_color[passport['ecl']])
-    t.begin_fill()
-    for _ in range(4):
-        fwd(20)
-        l(90)
-    t.end_fill()
-    up()
-    l(90)
+    draw_eye()
+    t.setheading(0)
     fwd(60)
-    dwn()
-    t.begin_fill()
-    for _ in range(4):
-        fwd(20)
-        r(90)
-    t.end_fill()
-    up()
+    draw_eye()
     # Transfer to mouth
-    fwd(20)
-    r(90)
-    fwd(60)
-    l(90)
+    transfer_mouth = [(fwd, 20), (r, 90), (fwd, 60), (l, 90)]
+    execute_moves(transfer_mouth)
     # Mouth
-    dwn()
-    t.fillcolor("#000000")
-    t.begin_fill()
-    mouth = [(fwd, 20), (r, 90), (fwd, 20), (r, 90), (fwd, 20), (l, 90), (fwd, 20), (r, 90), (fwd, 80), (r, 90), (fwd, 20), (l, 90), (fwd, 20), (r, 90), (fwd, 20), (r, 90), (fwd, 100)]
-    for mv in mouth:
-        mv[0](mv[1])
-    t.end_fill()
-    t.fillcolor("#FF0000")
-    up()
+    mouth = [(t.fillcolor, mouth_color), (t.begin_fill, None), (fwd, 20), (r, 90), (fwd, 20), (r, 90), (fwd, 20), (l, 90), (fwd, 20), (r, 90), (fwd, 80), (r, 90), (fwd, 20), (l, 90), (fwd, 20), (r, 90), (fwd, 20), (r, 90), (fwd, 100), (t.end_fill, None)]
+    execute_moves(mouth)
     # Tongue
-    tongue = [(r, 90), (fwd, 20), (r, 90), (fwd, 35)]
-    for mv in tongue:
-        mv[0](mv[1])
-    dwn()
-    t.begin_fill()
-    fwd(35)
-    r(90)
-    fwd(10)
-    r(90)
-    fwd(35)
-    r(90)
-    fwd(10)
-    t.end_fill()
-    up()
+    tongue = [(t.fillcolor, tongue_color), (r, 90), (fwd, 20), (r, 90), (fwd, 35), (t.begin_fill, None), (fwd, 30), (r, 90), (fwd, 10), (r, 90), (fwd, 35), (r,90), (fwd, 10), (t.end_fill, None)]
+    execute_moves(tongue)
     # Write information
     t.goto(t.xcor()-80, t.ycor()-60)
     t.write("Year of birth: {}".format(passport['byr']))
@@ -165,13 +162,14 @@ def draw_person(t, passport):
     t.goto(t.xcor(), t.ycor()-15)
     t.write("Passport ID: {}".format(passport['pid']))
     t.goto(t.xcor(), t.ycor()-15)
-    t.write("Height: {} {}".format(passport['hgt'][:-2], passport['hgt'][-2:]))
+    t.write("Height: {}".format(height))
 
 def animate_passports(valid_passports):
     t = turtle.Turtle()
     s = turtle.Screen()
-    s.setup(width=420, height=420)
+    s.setup(width=340, height=400)
     s.title("Day 4 of Advent of Code 2020!")
+    s.screensize(300, 360)
     t.speed(0)
     t.hideturtle()
     for passp in valid_passports:
