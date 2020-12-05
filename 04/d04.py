@@ -63,7 +63,7 @@ def draw_person(t, passport):
             t.rt(90)
         t.end_fill()
     
-    eye_palette = {'amb': '#FFBF00', 'blu': '#0000FF', 'brn': '#b86e07', 'gry': '#8f8b85', 'grn': '#32cd32', 'hzl': '#8e7618', 'oth': '#ff0000'}
+    eye_palette = {'amb': '#FFBF00', 'blu': '#85abce', 'brn': '#b86e07', 'gry': '#8f8b85', 'grn': '#32cd32', 'hzl': '#8e7618', 'oth': '#ff0000'}
     eye_color = eye_palette[passport['ecl']]
     hair_size = choice(range(5, 35))
     hair_color = passport['hcl']
