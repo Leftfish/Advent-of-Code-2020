@@ -1,5 +1,7 @@
 import re
 
+print("Day 4 of Advent of Code!")
+
 def is_valid_entry(entry, oblig_fields):
     return all(field in entry for field in oblig_fields)
 
@@ -83,6 +85,7 @@ iyr:2010 hgt:158cm hcl:#b6652a ecl:blu byr:1944 eyr:2021 pid:093154719'''
 print("Tests...")
 print("Bad passports OK:", validate_batch(bad_test_passports.split('\n\n'), OBLIG_FIELDS, YEAR_FIELDS, EYE_FIELD, PASSPORT_ID_FIELD, HAIR_COLOR_FIELD, HEIGHT_FIELD)[1] == 0)
 print("Good passports OK:", validate_batch(good_test_passports.split('\n\n'), OBLIG_FIELDS, YEAR_FIELDS, EYE_FIELD, PASSPORT_ID_FIELD, HAIR_COLOR_FIELD, HEIGHT_FIELD)[1] == len(good_test_passports.split('\n\n')))
+print("---------------------")
 
 with open("input", mode = 'r') as inp:
     print("Solution...")

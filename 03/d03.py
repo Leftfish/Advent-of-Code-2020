@@ -36,6 +36,7 @@ max_step_right = max((d[0] for d in directions))
 print("Tests...")
 print("Trees in one slope:", traverse_map(test_pattern, (3,1)) == 7)
 print("Product of multiple slopes:", reduce(mul, (traverse_map(test_pattern, d) for d in directions)) == 336)
+print("---------------------")
 
 with open("input", mode = 'r') as inp:
     print("Solution...")
