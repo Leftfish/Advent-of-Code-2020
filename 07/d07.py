@@ -1,31 +1,19 @@
-import networkx as nx
+from collections import defaultdict
 import re
 
 print("Day 7 of Advent of Code!")
 
 def make_graph(rules):
-    G = nx.DiGraph()
-    for r in rules:
-        all_bags = re.findall(r'\w+ \w+ bag', r)
-        for bag in all_bags:
-            if bag != 'no other bag':
-                G.add_node(bag)
-        r = r.split("contain")
-        out_bag = re.findall(r'\w+ \w+ bag', r[0])[0] 
-        in_bags = re.findall(r'(\d+) (\w+ \w+ bag)', r[1])
+    bags_graph = defaultdict(dict)
+    for line in rules.split('\n'):
+        line = line.split("contain")
+        out_bag = re.findall(r'\w+ \w+ bag', line[0])[0] 
+        in_bags = re.findall(r'(\d+) (\w+ \w+ bag)', line[1])
+        counts = {}
         for bag in in_bags:
-            G.add_edge(out_bag, bag[1], weight = int(bag[0]))
-    return G
-
-def count_paths(G, my):
-    res = set()
-    for n in G.nodes():
-        if n != my:
-            try:
-                res.update(nx.shortest_path(G, n, my))
-            except:
-                pass
-    return len(res) - 1
+            counts[bag[1]] = int(bag[0])
+        bags_graph[out_bag] = counts
+    return bags_graph
 
 def count_bags(G, my):
     bags_count = 0
@@ -34,10 +22,17 @@ def count_bags(G, my):
         current = stack.pop()
         in_bags = G[current]
         for bag in in_bags:
-            count = in_bags[bag]['weight']
+            count = in_bags[bag]
             bags_count += count
             stack.extend([bag] * count)
     return bags_count
+
+def DFS(G, start, discovered = set()):
+    discovered.add(start)
+    for node in G[start]:
+        if node not in discovered:
+            DFS(G, node, discovered)
+    return discovered
 
 rules = '''light red bags contain 1 bright white bag, 2 muted yellow bags.
 dark orange bags contain 3 bright white bags, 4 muted yellow bags.
@@ -50,14 +45,13 @@ faded blue bags contain no other bags.
 dotted black bags contain no other bags.'''
 
 print("Tests...")
-my = 'shiny gold bag'
-G = make_graph(rules.split('\n'))
-print("Number of paths:", count_paths(G, 'shiny gold bag') == 4)
+G = make_graph(rules)
+print("Number of paths:", sum(1 for node in G if node != 'shiny gold bag' and 'shiny gold bag' in DFS(G, node, set())) == 4)
 print("Number of bags", count_bags(G, 'shiny gold bag') == 32)
 print("---------------------")
 
 with open("input", mode = 'r') as inp:
-    rules = [r.strip() for r in inp.readlines()]
+    rules = inp.read()
     G = make_graph(rules)
-    print("Number of paths:", count_paths(G, 'shiny gold bag'))
+    print("Number of paths:", sum(1 for node in G if node != 'shiny gold bag' and 'shiny gold bag' in DFS(G, node, set())))
     print("Number of bags:", count_bags(G, 'shiny gold bag'))
