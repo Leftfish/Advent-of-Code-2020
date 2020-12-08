@@ -15,3 +15,4 @@ Things I **L**earned, **R**evised or **I**mproved at in 2020:
 * [Day 5](05/d05.py): Binary search (**R**)
 * [Day 6](06/d06.py): Set operations (**I**)
 * [Day 7](07/d07.py): Recursive DFS (**L**), iterative DFS (**R**), spotting directed graphs (**I**) and parsing content to make such graphs (**L**)
+* [Day 8](08/d08.py): Copying nested objects in Python (**R**)

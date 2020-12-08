@@ -3,10 +3,12 @@ import re
 from time import sleep
 from random import choice
 
-print("Day 4 of Advent of Code!")
+print('Day 4 of Advent of Code!')
+
 
 def is_valid_entry(entry, oblig_fields):
     return all(field in entry for field in oblig_fields)
+
 
 def create_passport(line, year_fields):
     passport = {}
@@ -16,13 +18,14 @@ def create_passport(line, year_fields):
         passport[k] = v
     return passport
 
+
 def validate_passport(passport, year_fields, eye_field, passport_id_field, hair_color_field, height_field):
     for k in passport:
         entry = passport[k]
         if k in year_fields and not (year_fields[k][1] >= entry >= year_fields[k][0]):
             return False
         if k in eye_field and entry not in eye_field[k]:
-            return False 
+            return False
         if k in passport_id_field and not re.fullmatch(passport_id_field[k], entry):
             return False
         if k in hair_color_field and not re.fullmatch(hair_color_field[k], entry):
@@ -39,6 +42,7 @@ def validate_passport(passport, year_fields, eye_field, passport_id_field, hair_
                     return False
     return True
 
+
 def validate_batch(entries, oblig_fields, year_fields, eye_field, passport_id_field, hair_color_field, height_field):
     has_required_fields = 0
     valid_passports = []
@@ -49,6 +53,7 @@ def validate_batch(entries, oblig_fields, year_fields, eye_field, passport_id_fi
             if validate_passport(passport, year_fields, eye_field, passport_id_field, hair_color_field, height_field):
                 valid_passports.append(passport)
     return has_required_fields, valid_passports
+
 
 def draw_person(t, passport):
     def execute_moves(moves):
@@ -62,7 +67,7 @@ def draw_person(t, passport):
             t.fd(20)
             t.rt(90)
         t.end_fill()
-    
+
     eye_palette = {'amb': '#FFBF00', 'blu': '#85abce', 'brn': '#b86e07', 'gry': '#8f8b85', 'grn': '#32cd32', 'hzl': '#8e7618', 'oth': '#ff0000'}
     eye_color = eye_palette[passport['ecl']]
     hair_size = choice(range(5, 35))
@@ -71,7 +76,7 @@ def draw_person(t, passport):
     tongue_color = '#FF0000'
     skin_tone = choice(['#fdf5e2', '#fbefba', '#ffd6a4', '#c68642', '#4b3932'])
     height_data = passport['hgt']
-    
+
     if height_data.endswith('cm'):
         height = '{} cm ({} in)'.format(height_data[:-2], int(int(height_data[:-2]) / 2.54))
     else:
@@ -90,11 +95,11 @@ def draw_person(t, passport):
         t.rt(90)
     t.end_fill()
     # Hair
-    hair = [(t.begin_fill, None), (t.fillcolor, hair_color), (t.fd, 160), (t.rt,90), (t.fd, hair_size), (t.rt,90), (t.fd, 160), (t.rt,90), (t.fd, hair_size), (t.end_fill, None)]
+    hair = [(t.begin_fill, None), (t.fillcolor, hair_color), (t.fd, 160), (t.rt, 90), (t.fd, hair_size), (t.rt, 90), (t.fd, 160), (t.rt, 90), (t.fd, hair_size), (t.end_fill, None)]
     execute_moves(hair)
     t.setheading(0)
     # Transfer to eyes
-    transfer_eyes = [(t.fd, 40), (t.rt,90), (t.fd, 40)]
+    transfer_eyes = [(t.fd, 40), (t.rt, 90), (t.fd, 40)]
     execute_moves(transfer_eyes)
     # Eyes
     draw_eye()
@@ -102,31 +107,32 @@ def draw_person(t, passport):
     t.fd(60)
     draw_eye()
     # Transfer to mouth
-    transfer_mouth = [(t.fd, 20), (t.rt,90), (t.fd, 60), (t.lt, 90)]
+    transfer_mouth = [(t.fd, 20), (t.rt, 90), (t.fd, 60), (t.lt, 90)]
     execute_moves(transfer_mouth)
     # Mouth
-    mouth = [(t.fillcolor, mouth_color), (t.begin_fill, None), (t.fd, 20), (t.rt,90), (t.fd, 20), (t.rt,90), (t.fd, 20), (t.lt, 90), (t.fd, 20), (t.rt,90), (t.fd, 80), (t.rt,90), (t.fd, 20), (t.lt, 90), (t.fd, 20), (t.rt,90), (t.fd, 20), (t.rt,90), (t.fd, 100), (t.end_fill, None)]
+    mouth = [(t.fillcolor, mouth_color), (t.begin_fill, None), (t.fd, 20), (t.rt, 90), (t.fd, 20), (t.rt, 90), (t.fd, 20), (t.lt, 90), (t.fd, 20), (t.rt, 90), (t.fd, 80), (t.rt, 90), (t.fd, 20), (t.lt, 90), (t.fd, 20), (t.rt, 90), (t.fd, 20), (t.rt, 90), (t.fd, 100), (t.end_fill, None)]
     execute_moves(mouth)
     # Tongue
-    tongue = [(t.fillcolor, tongue_color), (t.rt,90), (t.fd, 20), (t.rt,90), (t.fd, 35), (t.begin_fill, None), (t.fd, 30), (t.rt,90), (t.fd, 10), (t.rt,90), (t.fd, 35), (t.rt,90), (t.fd, 10), (t.end_fill, None)]
+    tongue = [(t.fillcolor, tongue_color), (t.rt, 90), (t.fd, 20), (t.rt, 90), (t.fd, 35), (t.begin_fill, None), (t.fd, 30), (t.rt, 90), (t.fd, 10), (t.rt, 90), (t.fd, 35), (t.rt, 90), (t.fd, 10), (t.end_fill, None)]
     execute_moves(tongue)
     # Write information
     t.goto(t.xcor()-80, t.ycor()-60)
-    t.write("Year of birth: {}".format(passport['byr']))
+    t.write('Year of birth: {}'.format(passport['byr']))
     t.sety(t.ycor()-15)
-    t.write("Passport issued in: {}".format(passport['iyr']))
+    t.write('Passport issued in: {}'.format(passport['iyr']))
     t.sety(t.ycor()-15)
-    t.write("Passport valid until: {}".format(passport['eyr']))
+    t.write('Passport valid until: {}'.format(passport['eyr']))
     t.sety(t.ycor()-15)
-    t.write("Passport ID: {}".format(passport['pid']))
+    t.write('Passport ID: {}'.format(passport['pid']))
     t.sety(t.ycor()-15)
-    t.write("Height: {}".format(height))
+    t.write('Height: {}'.format(height))
+
 
 def animate_passports(valid_passports):
     t = turtle.Turtle()
     s = turtle.Screen()
     s.setup(width=340, height=400)
-    s.title("Day 4 of Advent of Code 2020!")
+    s.title('Day 4 of Advent of Code 2020!')
     s.screensize(300, 360)
     t.speed(0)
     t.hideturtle()
@@ -170,14 +176,14 @@ eyr:2022
 
 iyr:2010 hgt:158cm hcl:#b6652a ecl:blu byr:1944 eyr:2021 pid:093154719'''
 
-print("Tests...")
-print("Bad passports OK:", len(validate_batch(bad_test_passports.split('\n\n'), OBLIG_FIELDS, YEAR_FIELDS, EYE_FIELD, PASSPORT_ID_FIELD, HAIR_COLOR_FIELD, HEIGHT_FIELD)[1]) == 0)
-print("Good passports OK:", len(validate_batch(good_test_passports.split('\n\n'), OBLIG_FIELDS, YEAR_FIELDS, EYE_FIELD, PASSPORT_ID_FIELD, HAIR_COLOR_FIELD, HEIGHT_FIELD)[1]) == len(good_test_passports.split('\n\n')))
-print("---------------------")
- 
-with open("input", mode = 'r') as inp:
-    print("Solution...")
+print('Tests...')
+print('Bad passports OK:', len(validate_batch(bad_test_passports.split('\n\n'), OBLIG_FIELDS, YEAR_FIELDS, EYE_FIELD, PASSPORT_ID_FIELD, HAIR_COLOR_FIELD, HEIGHT_FIELD)[1]) == 0)
+print('Good passports OK:', len(validate_batch(good_test_passports.split('\n\n'), OBLIG_FIELDS, YEAR_FIELDS, EYE_FIELD, PASSPORT_ID_FIELD, HAIR_COLOR_FIELD, HEIGHT_FIELD)[1]) == len(good_test_passports.split('\n\n')))
+print('---------------------')
+
+with open('input', mode='r') as inp:
+    print('Solution...')
     entries = inp.read().split('\n\n')
     has_fields, valid_passports = validate_batch(entries, OBLIG_FIELDS, YEAR_FIELDS, EYE_FIELD, PASSPORT_ID_FIELD, HAIR_COLOR_FIELD, HEIGHT_FIELD)
-    print("{} have required fields, {} are valid.".format(has_fields, len(valid_passports)))
+    print('{} have required fields, {} are valid.'.format(has_fields, len(valid_passports)))
     animate_passports(valid_passports)
