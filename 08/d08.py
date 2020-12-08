@@ -1,24 +1,13 @@
 print('Day 8 of Advent of Code!')
 
 
-test_program = '''nop +0
-acc +1
-jmp +4
-acc +3
-jmp -3
-acc -99
-acc +1
-jmp -4
-acc +6'''
-
-
 def parse_commands(inp):
     program = inp.split('\n')
     commands = []
     i = 0
     for command in program:
         parsed = command.split()
-        commands.append([i, parsed[0], int(parsed[1])])
+        commands.append([parsed[0], int(parsed[1])])
         i += 1
     return commands
 
@@ -29,7 +18,7 @@ def run_program(commands, part=1):
     acc = 0
     while pointer <= len(commands)-1:
         current = commands[pointer]
-        op, arg = current[1], current[2]
+        op, arg = current[0], current[1]
         if pointer in executed:
             if part == 1:
                 return None, acc
@@ -51,20 +40,20 @@ def run_program(commands, part=1):
 
 def find_suspect_operations(commands):
     suspects = []
-    for command in commands:
-        op_id, op = command[0], command[1]
+    for i in range(len(commands)):
+        op = commands[i][0]
         if op in ('nop', 'jmp'):
-            suspects.append(op_id)
+            suspects.append(i)
     return suspects
 
 
 def debug(program):
     suspects = find_suspect_operations(program)
     for s in suspects:
-        op = program[s][1]
+        op = program[s][0]
         if op == 'nop':
             new_prog = [op[:] for op in program]
-            new_prog[s][1] = 'jmp'
+            new_prog[s][0] = 'jmp'
             result = run_program(new_prog, part=2)
             if result[0]:
                 print('Switched nop to jmp at {}.'.format(s))
@@ -72,12 +61,23 @@ def debug(program):
             continue
         elif op == 'jmp':
             new_prog = [op[:] for op in program]
-            new_prog[s][1] = 'nop'
+            new_prog[s][0] = 'nop'
             result = run_program(new_prog, part=2)
             if result[0]:
                 print('Switched jmp to nop at {}.'.format(s))
                 return result[1]
             continue
+
+
+test_program = '''nop +0
+acc +1
+jmp +4
+acc +3
+jmp -3
+acc -99
+acc +1
+jmp -4
+acc +6'''
 
 print('Tests...')
 program = parse_commands(test_program)
