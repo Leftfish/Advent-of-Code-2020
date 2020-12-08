@@ -29,21 +29,21 @@ def run_program(commands, part=1):
     acc = 0
     while pointer <= len(commands)-1:
         current = commands[pointer]
-        op_id, op, arg = current[0], current[1], current[2]
-        if op_id in executed:
+        op, arg = current[1], current[2]
+        if pointer in executed:
             if part == 1:
                 return None, acc
             elif part == 2:
                 return False, acc
         if op == 'nop':
-            executed.add(op_id)
+            executed.add(pointer)
             pointer += 1
         elif op == 'acc':
-            executed.add(op_id)
+            executed.add(pointer)
             acc += arg
             pointer += 1
         elif op == 'jmp':
-            executed.add(op_id)
+            executed.add(pointer)
             pointer += arg
     if part == 2:
         return True, acc
