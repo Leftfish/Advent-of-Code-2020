@@ -17,3 +17,4 @@ Things I **L**earned, **R**evised or **I**mproved at in 2020:
 * [Day 7](07/d07.py): Recursive DFS (**L**), iterative DFS (**R**), spotting directed graphs (**I**) and representing them as dicts-of-dicts (**L**)
 * [Day 8](08/d08.py): Copying nested objects in Python (**R**)
 * [Day 9](09/d09.py): Sum of Twos, again (**R**) and finding subarrays which sum to a number (**L**)
+* [Day10](10/d10.py): ...that recursion is not always The Way [**R**]
