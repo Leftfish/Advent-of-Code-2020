@@ -23,9 +23,20 @@ def check_joltages(joltages, end):
     return ones, threes, diffs
 
 
-def sum_diffs_permutations(diffs):
+def tribonacci(n):
+    if 0 <= n <= 1: return 0
+    else:
+        a, b, c = 1, 1, 2
+        for _ in range(1, n-1):
+            a, b, c = b, c, a + b + c
+    return c
+
+
+def multiply_diffs_permutations(diffs):
     d = defaultdict(int)
     buffer = []
+    product = 1
+
     for i in range(len(diffs)):
         if diffs[i] == 1:
             buffer.append(diffs[i])
@@ -34,11 +45,12 @@ def sum_diffs_permutations(diffs):
                 d[len(buffer)] += 1
             buffer = []
     d[len(buffer)] += 1
-    ''' This is such an UGLY hack which rests upon knowing
-    that permutations occur only after multiple jumps of 1,
-    that there are at most four consecutive ones and in how
-    many ways you can make the jump by 2, 3 and 4.'''
-    return 7**d[4] * 4**d[3] * 2**d[2] 
+
+    for k in d:
+        multiplier = tribonacci(k)**d[k] if k > 0 else 1
+        product *= multiplier
+    
+    return product
 
 
 test_joltages = '''28
@@ -77,7 +89,7 @@ print('Tests...')
 joltages = [0] + sorted([int(i) for i in test_joltages.split('\n')])
 results = check_joltages(joltages, joltages[-1])
 print('Multiply jumps:', results[0] * results[1])
-print('Possible paths:', sum_diffs_permutations(results[2]))
+print('Possible paths:', multiply_diffs_permutations(results[2]))
 print('---------------------')
 
 with open('input', mode='r') as inp:
@@ -85,4 +97,4 @@ with open('input', mode='r') as inp:
     joltages = [0] + sorted([int(i) for i in inp.readlines()])
     results = check_joltages(joltages, joltages[-1])
     print('Multiply jumps:', results[0] * results[1])
-    print('Possible paths:', sum_diffs_permutations(results[2]))
+    print('Possible paths:', multiply_diffs_permutations(results[2]))
