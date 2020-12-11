@@ -195,10 +195,12 @@ L.LLLLL.LL'''
 
 t1 = make_map(test_layout.split('\n'))
 t2 = make_map(test_layout.split('\n'))
+t3 = make_map(test_layout.split('\n'))
 print('---------------')
 print('Tests...')
 print('Occupied seats, part 1:', simulate_seating(t1, count_adjacent_p1, 4) == 37)
-print('Occupied seats, part 2:', simulate_seating(t2, count_adjacent_p2, 5) == 26)
+print('Occupied seats, part 2 (faster, less pretty code):', simulate_seating(t2, count_adjacent_p2, 5) == 26)
+print('Occupied seats, part 2 (slower, prettier code):', simulate_seating(t3, count_adjacent_p2_alt, 5) == 26)
 print('---------------------')
 
 
