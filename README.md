@@ -18,4 +18,4 @@ Things I **L**earned, **R**evised or **I**mproved at in 2020:
 * [Day 8](08/d08.py): Copying nested objects in Python (**R**)
 * [Day 9](09/d09.py): Sum of Twos, again (**R**) and finding subarrays which sum to a number (**L**)
 * [Day 10](10/d10.py): ...that recursion is not always The Way (**R**) and that Tribonacci is a thing (**R**)
-* [Day 11](11/d11.py): Finding elements in 2D arrays (**R**), though there has to be a more elegant way than mine...
+* [Day 11](11/d11.py): Finding elements in 2D arrays (**R**), using Enums in Python (**L**) in alternative (slow-as-heck) solution of part 2
