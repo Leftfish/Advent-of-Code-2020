@@ -36,6 +36,8 @@ def count_adjacent_p1(y, x, arr):
         y, x = coord
         if arr[y][x] == TAKEN:
             adjacent += 1
+            if adjacent > 4:
+                break
     return adjacent
 
 
