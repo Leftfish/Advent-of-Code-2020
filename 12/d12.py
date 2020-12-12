@@ -9,18 +9,20 @@ TR = 'R'
 TL = 'L'
 
 
-def travel(coords, x=0, y=0, heading=90):
-    for coord in coords:
-        op = coord[0]
-        val = int(coord[1:])
-        if op == NO or (op == FW and heading == 0):
-            y += val
-        elif op == SO or (op == FW and heading == 180):
-            y -= val
-        elif op == WE or (op == FW and heading == 270):
-            x += val
-        elif op == EA or (op == FW and heading == 90):
-            x -= val
+def travel(moves, x=0, y=0, heading=90):
+    dirs = {NO: (0, 1), SO: (0, -1), WE: (-1, 0), EA: (1, 0)}
+    headings_to_dirs = {0: NO, 90: EA, 180: SO, 270: WE}
+
+    for move in moves:
+        op = move[0]
+        val = int(move[1:])
+        if op in dirs:
+            x += dirs[op][0] * val
+            y += dirs[op][1] * val
+        elif op == FW:
+            course = headings_to_dirs[heading]
+            x += dirs[course][0] * val
+            y += dirs[course][1] * val
         elif op == TR:
             heading = (heading + val) % 360
         elif op == TL:
@@ -30,9 +32,9 @@ def travel(coords, x=0, y=0, heading=90):
     return x, y
 
 
-def travel_waypoint(coords, wx, wy, x=0, y=0):
-    for coord in coords:
-        op, val = coord[0], int(coord[1:])
+def travel_waypoint(moves, wx, wy, x=0, y=0):
+    for move in moves:
+        op, val = move[0], int(move[1:])
 
         if op == FW:
             x += val * wx
@@ -66,16 +68,16 @@ F7
 R90
 F11'''
 
-coords = [line.rstrip() for line in test.split('\n')]
+moves = [line.rstrip() for line in test.split('\n')]
 
 print('Tests...')
-print('Distance without waypoint:', calc_manhattan(*travel(coords)) == 25)
-print('Distance without waypoint:', calc_manhattan(*travel_waypoint(coords, 10, 1)) == 286)
+print('Distance without waypoint:', calc_manhattan(*travel(moves)) == 25)
+print('Distance without waypoint:', calc_manhattan(*travel_waypoint(moves, 10, 1)) == 286)
 print('---------------------')
 
 
 with open('input', mode='r') as inp:
     print('Solution...')
-    coords = [line.rstrip() for line in inp.readlines()]
-    print('Distance without waypoint:', calc_manhattan(*travel(coords)))
-    print('Distance without waypoint:', calc_manhattan(*travel_waypoint(coords, 10, 1)))
+    moves = [line.rstrip() for line in inp.readlines()]
+    print('Distance without waypoint:', calc_manhattan(*travel(moves)))
+    print('Distance without waypoint:', calc_manhattan(*travel_waypoint(moves, 10, 1)))
