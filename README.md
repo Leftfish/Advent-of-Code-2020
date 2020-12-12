@@ -4,7 +4,7 @@ For the third time I'm trying to find out how far I can make it in [Advent of Co
 
 Now it's 2020. I barely touched coding this year and with my current schedule, I thought I wouldn't have time for this kind of fun and I probably don't. 
 
-But I'm trying to solve some puzzles anyway!
+But I decided to solve some puzzles anyway!
 
 Things I **L**earned, **R**evised or **I**mproved at in 2020:
 
@@ -18,4 +18,5 @@ Things I **L**earned, **R**evised or **I**mproved at in 2020:
 * [Day 8](08/d08.py): Copying nested objects in Python (**R**)
 * [Day 9](09/d09.py): Sum of Twos, again (**R**) and finding subarrays which sum to a number (**L**)
 * [Day 10](10/d10.py): ...that recursion is not always The Way (**R**) and that Tribonacci is a thing (**R**)
-* [Day 11](11/d11.py): Finding elements in 2D arrays (**R**), using Enums in Python (**L**) in alternative (slow-as-heck) solution of part 2
+* [Day 11](11/d11.py): Finding elements in 2D arrays (**R**), using Enums in Python (**L**) in alternative (slow-as-heck) solution of pt. 2
+* [Day 12](12/d12.py): Taxicab geometry a.k.a. Manhattan distance (**R**)
