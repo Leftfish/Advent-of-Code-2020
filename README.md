@@ -20,6 +20,6 @@ Things I **L**earned, **R**evised or **I**mproved at in 2020:
 * [Day 10](10/d10.py): ...that recursion is not always The Way (**R**) and that Tribonacci is a thing (**R**)
 * [Day 11](11/d11.py): Finding elements in 2D arrays (**R**), using Enums in Python (**L**) in alternative (slow-as-heck) solution of pt. 2
 * [Day 12](12/d12.py): Taxicab geometry a.k.a. Manhattan distance (**R**)
-* [Day 13](13/d13.py): Numbers theory (**I**) including the Chinese remainder theorem (**L**)
+* [Day 13](13/d13.py): Numbers theory (**I**) including learning that the Chinese remainder theorem is a thing (**L**)
 
 As of Day 13 I have 26 stars which is my personal best.

@@ -21,32 +21,28 @@ def check_congruence(to_check, test_stamp):
     for bus_id in to_check[1:]:
         modifier += 1
         modified_stamp = test_stamp + modifier
-        if bus_id != 'x':
-            if modified_stamp % bus_id != 0:
-                success = False
-                break
+        if bus_id != 'x' and modified_stamp % bus_id != 0:
+            success = False
+            break
+
     return success
-
-
-def multiply(arr):
-    res = 1
-    for i in arr:
-        if str(i).isdigit():
-            res *= i
-    return res
 
 
 def check(intervals):
     end = 1
-    result, interval = intervals[0], intervals[0]
+    result = intervals[0] if intervals[0] != 'x' else 1
+    interval = intervals[0] if intervals[0] != 'x' else 1
+    
     while end < len(intervals):
         while True:
             if not check_congruence(intervals[:end+1], result):
                 result += interval
             else:
-                interval = multiply(intervals[:end+1])
+                if intervals[end] != 'x':
+                    interval *= intervals[end]
                 break
         end += 1
+
     return result
 
 
