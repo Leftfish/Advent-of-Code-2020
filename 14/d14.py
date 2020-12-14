@@ -6,25 +6,28 @@ print('Day 14 of Advent of Code!')
 
 
 def create_mask(pattern):
-    d = {}
+    mask = {}
     for i, char in enumerate(pattern):
         if char != 'X':
-            d[i] = int(char)
+            mask[i] = int(char)
         else:
-            d[i] = char
-    return d
+            mask[i] = char
+    return mask
 
 
-def to_36bit_array(n):
-    b = bin(n)[2:].zfill(36)
-    return list(map(int, b))
+def to_bit_array(n, bits):
+    b = bin(n)[2:].zfill(bits)
+    bit_array = list(map(int, b))
+    return bit_array
 
 
-def apply_mask(value, mask):
-    buffer = [0] * 36
-    to_write = to_36bit_array(value)
+def apply_mask(value, mask, bits, mode=1):
+    buffer = [0] * bits
+    to_write = to_bit_array(value, bits)
     for i in range(len(buffer)):
-        if i in mask and mask[i] != 'X':
+        if mode == 1 and mask[i] != 'X':
+            buffer[i] = mask[i]
+        elif mode == 2 and mask[i]:
             buffer[i] = mask[i]
         else:
             buffer[i] = to_write[i]
@@ -32,25 +35,13 @@ def apply_mask(value, mask):
     return buffer
 
 
-def apply_mask_to_addr(value, mask):
-    buffer = [0] * 36
-    to_write = to_36bit_array(value)
-    for i in range(len(buffer)):
-        if i in mask and mask[i]:
-            buffer[i] = mask[i]
-        else:
-            buffer[i] = to_write[i]
-    buffer = ''.join(map(str, buffer))
-    return buffer
-
-
-def create_addr_lst(val, mask):
-    addr = apply_mask_to_addr(val, mask)
+def create_addr_lst(val, mask, bits):
+    addr = apply_mask(val, mask, bits, mode=2)
     floats = addr.count('X')
     permutes = [bin(x)[2:].rjust(floats, '0') for x in range(2**floats)]
-    
+
     addr_list = []
-    
+
     for p in permutes:
         addr_tolist = list(addr)
         i = 0
@@ -81,24 +72,24 @@ def parse_line(line):
     return op, val, addr
 
 
-def run_program(program, memory, mode):
-    mask = 'X' * 36
+def run_program(program, memory, bits, mode):
+    mask = 'X' * bits
     for line in program:
         op, val, addr = parse_line(line)
         if op == 'mask':
             mask = create_mask(val)
         else:
             if mode == 1:
-                to_write = int('0b' + apply_mask(val, mask), 2)
+                to_write = int('0b' + apply_mask(val, mask, bits, mode=1), 2)
                 update_memory(memory, addr, to_write)
             elif mode == 2:
-                addresses = create_addr_lst(addr, mask)
+                addresses = create_addr_lst(addr, mask, bits)
                 for address in addresses:
                     update_memory(memory, address, val)
             else:
                 raise ValueError("Invalid mode (only supports mode 1 or 2)")
-    return sum(memory.values())
-        
+    return memory
+
 
 test = '''mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X
 mem[8] = 11
@@ -115,8 +106,9 @@ data = test.split('\n')
 data_2 = test_2.split('\n')
 memory = defaultdict(int)
 memory_2 = defaultdict(int)
-print("Sum of values:", run_program(data, memory, mode=1) == 165)
-print("Sum of values:", run_program(data_2, memory_2, mode=2) == 208)
+bits = 36
+print("Sum of values:", sum(run_program(data, memory, bits, mode=1).values()) == 165)
+print("Sum of values:", sum(run_program(data_2, memory_2, bits, mode=2).values()) == 208)
 
 print('---------------------')
 
@@ -125,5 +117,5 @@ with open('input', mode='r') as inp:
     data = [l.rstrip() for l in inp.readlines()]
     memory = defaultdict(int)
     memory_2 = defaultdict(int)
-    print("Sum of values:", run_program(data, memory, mode=1))
-    print("Sum of values:", run_program(data, memory_2, mode=2))
+    print("Sum of values:", sum(run_program(data, memory, bits, mode=1).values()))
+    print("Sum of values:", sum(run_program(data, memory_2, bits, mode=2).values()))
