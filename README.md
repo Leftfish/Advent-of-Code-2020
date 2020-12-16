@@ -23,5 +23,6 @@ Things I **L**earned, **R**evised or **I**mproved at in 2020:
 * [Day 13](13/d13.py): Numbers theory (**I**) including learning that the Chinese remainder theorem is a thing (**L**)
 * [Day 14](14/d14.py): Permutations (**R**) and bitmasks (**I**)
 * [Day 15](15/d15.py): defaultdict (**I**) and Van Eck sequence (**L**)
+* [Day 16](16/d16.py): Set operations (**I**)
 
-As of Day 15 I have 30 stars which is my personal best.
+As of Day 16 I have 32 stars which is my personal best. Though it seems that this year the puzzles are easier and less time-consuming than in 2019.
