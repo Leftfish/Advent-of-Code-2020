@@ -16,6 +16,18 @@ nearby tickets:
 55,2,20
 38,6,12'''
 
+test_2 = '''class: 0-1 or 4-19
+row: 0-5 or 8-19
+seat: 0-13 or 16-19
+
+your ticket:
+11,12,13
+
+nearby tickets:
+3,9,18
+15,1,5
+5,14,9'''
+
 def split_nearby_tickets(notes):
     split = notes.find('nearby tickets') + 16
     tickets = notes[split:]
@@ -25,7 +37,7 @@ def split_nearby_tickets(notes):
 def parse_tickets(tickets):
     nearby_tickets = []
     for line in tickets.split('\n'):
-        ticket = set(map(int, line.split(',')))
+        ticket = list(map(int, line.split(',')))
         nearby_tickets.append(ticket)
     return nearby_tickets
 
@@ -36,7 +48,7 @@ def split_my_ticket(notes):
     return notes, my_ticket
 
 def parse_my_ticket(my_ticket):
-    return set(my_ticket.split(','))
+    return list(my_ticket.split(','))
 
 def parse_rules(notes):
     rules = {}
@@ -47,7 +59,7 @@ def parse_rules(notes):
     return rules
 
 def parse_notes(notes):
-    notes, nearby_tickets = split_nearby_tickets(test)
+    notes, nearby_tickets = split_nearby_tickets(notes)
     notes, my_ticket = split_my_ticket(notes)
     nearby_tickets = parse_tickets(nearby_tickets)
     my_ticket = parse_my_ticket(my_ticket)
@@ -64,14 +76,43 @@ def check_ticket(ticket, rules):
             invalid_values.add(digit)
     return invalid_values
 
-rules, my_ticket, nearby_tickets = parse_notes(test)
+def find_valid_tickets(tickets, rules):
+    valid_tickets = []
+    s = 0
+    for ticket in nearby_tickets:
+        checksum = sum(check_ticket(ticket, rules))
+        if checksum == 0:
+            valid_tickets.append(ticket)
+        else:
+            s += checksum
+    return s, valid_tickets
 
-s = 0
-for ticket in nearby_tickets:
-    s += sum(check_ticket(ticket, rules))
-print(s)
+def find_candidates(field, tickets, rules):
+    not_valid = []
+    for ticket in tickets:
+        for f in range(len(tickets[0])):
+            if ticket[f] not in rules[field]:
+                not_valid.append(f)
+    return not_valid
+
+def go(fields, tickets, rules):
+    r = {}
+    checker = set(range(len(tickets[0])))
+    for field in fields:
+        res = set(find_candidates(field, valid_tickets, rules))
+        r[field] = checker - res
+    return r
 
 print('Tests...')
+rules, my_ticket, nearby_tickets = parse_notes(test)
+solution_pt1, valid_tickets = find_valid_tickets(nearby_tickets, rules)
+print("Sum of invalid fields:", solution_pt1 == 71)
+
+rules, my_ticket, nearby_tickets = parse_notes(test_2)
+_, valid_tickets = find_valid_tickets(nearby_tickets, rules)
+fields = rules.keys()
+#go(fields, valid_tickets, rules)
+
 print('---------------------')
 
 with open('input', mode='r') as inp:
@@ -79,10 +120,24 @@ with open('input', mode='r') as inp:
     test = inp.read()
 
     rules, my_ticket, nearby_tickets = parse_notes(test)
+    solution_pt1, valid_tickets = find_valid_tickets(nearby_tickets, rules)
+    print("Sum of invalid fields:", solution_pt1)
+    fields = rules.keys()
+    candidates = go(fields, valid_tickets, rules)
+    sorted_candidates = {k: v for k, v in sorted(candidates.items(), key=lambda item: len(item[1]))}
+    seen = set()
+    result = {}
+    for field in sorted_candidates:
+        vals = sorted_candidates[field]
+        proper = vals - seen
+        result[field] = proper
+        seen.update(proper)
+    print(result)
+    res = 1
+    for k in result:
+        if "departure" in k:
+            res *= int(my_ticket[sum(result[k])])
+    print(res)
 
-    s = 0
-    for ticket in nearby_tickets:
-        s += sum(check_ticket(ticket, rules))
-    print(s)
     
     
