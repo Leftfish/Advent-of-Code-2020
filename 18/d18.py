@@ -22,16 +22,17 @@ def parse_expression(tokens, mode=1):
         queue.append(stack.pop())
     return queue
 
+
 def evaluate_expression(queue):
     stack = []
     for token in queue:
         if token.isnumeric():
             stack.append(token)
         elif token in '+*':
-            sec = stack.pop()
-            fir = stack.pop()
-            expr = " ".join([fir, token, sec])
-            res = eval(expr)
+            second = stack.pop()
+            first = stack.pop()
+            expression = " ".join([first, token, second])
+            res = eval(expression)
             stack.append(str(res))
     return int(stack[-1])
 
