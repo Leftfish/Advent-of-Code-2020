@@ -1,22 +1,13 @@
 print('Day 18 of Advent of Code!')
 
-
-exp = "1 + (2 * 3) + (4 * (5 + 6))"
-exp = "((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2"
-
-OPS = {'+': 2, '-': 2, '*': 1, '/': 1}
-
 def parse_expression(tokens, mode=1):
-    queue = []
-    stack = []
-    if mode == 1:
-        ops = {'+': 1, '-': 1, '*': 1, '/': 1}
-    else:
-        ops = {'+': 2, '-': 2, '*': 1, '/': 1}
+    queue, stack = [], []
+    ops = {'+': 1, '*': 1} if mode == 1 else {'+': 2, '*': 1}
     for token in tokens:
-        if token in OPS:
+        if token in ops:
             while stack and stack[-1] in ops:
-                queue.append(stack.pop())
+                if ops[token] <= ops[stack[-1]]:
+                    queue.append(stack.pop())
                 break
             stack.append(token)
         elif token == '(':
@@ -27,10 +18,8 @@ def parse_expression(tokens, mode=1):
             stack.pop()
         else:
             queue.append(token)
-
     while stack:
         queue.append(stack.pop())
-    
     return queue
 
 def evaluate_expression(queue):
@@ -38,22 +27,21 @@ def evaluate_expression(queue):
     for token in queue:
         if token.isnumeric():
             stack.append(token)
-        elif token in OPS:
+        elif token in '+*':
             sec = stack.pop()
             fir = stack.pop()
             expr = " ".join([fir, token, sec])
             res = eval(expr)
             stack.append(str(res))
-
     return int(stack[-1])
 
-
-print(evaluate_expression(parse_expression(list(exp.replace(" ", "")))))
+test_exp = "5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))"
+print("Part 1: 5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4)) = 12240:", evaluate_expression(parse_expression(list(test_exp.replace(" ", "")), mode=1)) == 12240)
+print("Part 2: 5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4)) = 669060:", evaluate_expression(parse_expression(list(test_exp.replace(" ", "")), mode=2)) == 669060)
+print('---------------------')
 
 with open('input', mode='r') as inp:
     print('Solution...')
     test = [l.rstrip() for l in inp.readlines()]
-    s = 0
-    for l in test:
-        s += evaluate_expression(parse_expression(list(l.replace(" ", ""))))
-    print(s)
+    print("Part 1:", sum(evaluate_expression(parse_expression(list(line.replace(" ", "")), mode=1)) for line in test))
+    print("Part 2:", sum(evaluate_expression(parse_expression(list(line.replace(" ", "")), mode=2)) for line in test))
