@@ -23,6 +23,16 @@ def parse_expression(tokens, mode=1):
     return queue
 
 
+def use_operator(a, b, op):
+    a, b = int(a),  int(b)
+    if op == '*':
+        return a * b
+    elif op == '+':
+        return a + b
+    else:
+        raise ValueError("Operator not supported.")
+
+
 def evaluate_expression(queue):
     stack = []
     for token in queue:
@@ -31,8 +41,7 @@ def evaluate_expression(queue):
         elif token in '+*':
             second = stack.pop()
             first = stack.pop()
-            expression = " ".join([first, token, second])
-            res = eval(expression)
+            res = use_operator(first, second, token)
             stack.append(str(res))
     return int(stack[-1])
 
