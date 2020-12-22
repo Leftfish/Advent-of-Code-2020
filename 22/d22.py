@@ -3,6 +3,8 @@ from itertools import islice
 
 print('Day 22 of Advent of Code!')
 
+PLAYER_1 = 'PLAYER 1'
+PLAYER_2 = 'PLAYER 2'
 
 def parse_decks(data):
     player1, player2 = data.split('\n\n')
@@ -35,7 +37,7 @@ def play_game_rec(player1_deck, player2_deck, debug=False):
         check_deck_p1, check_deck_p2 = tuple(player1_deck), tuple(player2_deck)
 
         if check_deck_p1 in used_p1 or check_deck_p2 in used_p2:
-            return (player1_deck, 'PLAYER 1')
+            return (player1_deck, PLAYER_1)
         else:
             used_p1.add(check_deck_p1)
             used_p2.add(check_deck_p2)
@@ -48,11 +50,15 @@ def play_game_rec(player1_deck, player2_deck, debug=False):
         if p1_card <= len(player1_deck) and p2_card <= len(player2_deck):
             p1_rec_deck = deque(islice(player1_deck, 0, p1_card))
             p2_rec_deck = deque(islice(player2_deck, 0, p2_card))
-            recursive_score = play_game_rec(p1_rec_deck, p2_rec_deck)[1]
+            
+            if max(p1_rec_deck) > max(p2_rec_deck):
+                recursive_score = PLAYER_1
+            else:
+                recursive_score = play_game_rec(p1_rec_deck, p2_rec_deck)[1]
 
-        if recursive_score == 'PLAYER 1':
+        if recursive_score == PLAYER_1:
             player1_deck.extend((p1_card, p2_card))
-        elif recursive_score == 'PLAYER 2':
+        elif recursive_score == PLAYER_2:
             player2_deck.extend((p2_card, p1_card))
         elif p1_card > p2_card:
             player1_deck.extend((p1_card, p2_card))
@@ -61,7 +67,7 @@ def play_game_rec(player1_deck, player2_deck, debug=False):
         else:
             raise ValueError('Draw! Something not right with the input decks.')
 
-    return (player1_deck, 'PLAYER 1') if player1_deck else (player2_deck, 'PLAYER 2')
+    return (player1_deck, PLAYER_1) if player1_deck else (player2_deck, PLAYER_2)
 
 
 def calc_score(winning_deck):
