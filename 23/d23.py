@@ -2,10 +2,10 @@ print('Day 23 of Advent of Code!')
 
 
 def setup_game_round_1(inp, part1=True, max_part2=None):
-    i = 0
     cups = {}
     c = list(map(int, inp))
 
+    i = 0
     for j in range(1, len(c)):
         cups[c[i]] = c[j]
         i += 1

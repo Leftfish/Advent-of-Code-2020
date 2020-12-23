@@ -30,5 +30,6 @@ Things I **L**earned, **R**evised or **I**mproved at in 2020:
 * Day 20: Missed :( Ideas to try later: Backtracking algorithm? Find edges first, make an image border and then find edges inside?
 * [Day 21](21/d21.py): Set operations (**I**)
 * [Day 22](22/d22.py): Using deque (**I**) and recursion (**I**)
+* [Day 23](23/d23.py): Looped linked lists (**I**)
 
-As of Day 22 I have 40 stars which is my personal best. Though it seems that this year the puzzles are easier and less time-consuming than in 2019.
+As of Day 23 I have 42 stars which is my personal best. Though it seems that this year the puzzles are easier and less time-consuming than in 2019. But it still seems I improved a littl, I guess.
