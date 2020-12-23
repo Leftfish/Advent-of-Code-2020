@@ -1,15 +1,11 @@
 print('Day 23 of Advent of Code!')
 
 
-
-test = "389125467"
-test = "974618352"
-
-def parse_cups(inp):
+def setup_game_round_1(inp):
+    i = 0
     cups = {}
     c = list(map(int, inp))
 
-    i = 0
     for j in range(1, len(c)):
         cups[c[i]] = c[j]
         i += 1
@@ -17,69 +13,80 @@ def parse_cups(inp):
             cups[c[i]] = c[0]
     return cups
 
-def print_cups(cups, start):
+
+def setup_game_round_2(inp, max_cup):
+    i = 0
+    cups = {}
+    c = list(map(int, inp))
+
+    for j in range(1, len(c)):
+        cups[c[i]] = c[j]
+        i += 1
+        if i == len(c)-1:
+            cups[c[i]] = max(c) + 1
+
+    for k in range(max(c)+1, max_cup):
+        cups[k] = k+1
+
+    cups[max_cup] = c[0]
+
+    return cups
+
+
+def get_labels(cups, start):
     res = ''
     current = start
-    while len(res) < 9:
+    while len(res) < len(cups):
         res += str(cups[current])
         current = cups[current]
-    return res
+    return res[:-1]
 
 
-
-def play_round(cups, current, debug=False):
+def play_round(cups, current):
     one = cups[current]
     two = cups[one]
     three = cups[two]
 
     pickup = (one, two, three)
+    
     destination = current - 1
     if destination < 1:
             destination = max(cups.keys())
+    
     while destination in pickup:
         destination -= 1
         if destination < 1:
             destination = max(cups.keys())
-    
 
-    if debug:
-        print("Before round:", print_cups(cups, 7))
-        print(f"Current cup: {current}")
-        print(f"Pickups: {pickup}")
-        print(f"Destination: {destination}")
+    # Current points to next after the third picked up
     cups[current] = cups[three]
-    next_after_dest = cups[destination]
-    if debug:
-        print(f"Next after destinaton is {next_after_dest}.")
+    # Third cup picked up points to where destiantion used to point
+    cups[three] = cups[destination]
+    # Destination now points to first picked up
     cups[destination] = one
-    '''if debug:
-        print(f"One is {one}. Desination is {destination}. Now cups[destination] is {cups[destination]}.")
-        print(f"Cups[one] is {cups[one]}")
-        print(f"Cups[two] is {cups[two]}")
-        print(f"Cups[three] is {cups[three]}")'''
-    cups[three] = next_after_dest
-    #if debug:
-    print("After round:", print_cups(cups, 1))
-    '''if print_cups(cups, 1)[:-1] == '92658374':
-        print("!!!!")
-    if print_cups(cups, 1):-1] == '67384529':
-        print("!!!!")'''   
 
-cups = parse_cups(test)
-current = int(test[0])
-rnd = 1
-for _ in range(100):
-    if rnd != 1:
-        current = cups[current]
-    print(f"NEW ROUND {rnd}. Current {current}. Cups before: {print_cups(cups, 1)}")
-    play_round(cups, current, debug=False)
-    rnd += 1
-    
 
-## 758932641
+def play_game(inp, rounds, part1=True, part2=1000000):
+    cups = setup_game_round_1(inp) if part1 else setup_game_round_2(inp, part2)
+    current = int(inp[0])
+    rnd = 1
 
-print('Tests...')
-print('---------------------')
+    for _ in range(rounds):
+        if rnd != 1:
+            current = cups[current]
+        play_round(cups, current)
+
+        if not part1 and rnd % 2500000 == 0:
+            print(f'Current round: {rnd:,}')
+
+        rnd += 1
+
+    return get_labels(cups, 1) if part1 else cups[1] * cups[cups[1]]
 
 
 print('Solution...')
+cup_labels = '974618352'
+print('Game with 9 cups and 100 rounds...')
+print('ResultL', play_game(cup_labels, 100))
+print('Game with 1,000,000 cups and 10,000,000 rounds...')
+print('Result: ', play_game(cup_labels, 10000000, part1=False))
