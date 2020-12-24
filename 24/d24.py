@@ -1,3 +1,5 @@
+from re import findall
+
 print('Day 24 of Advent of Code!')
 
 
@@ -12,17 +14,8 @@ DIRS = {'w': W, 'e': E, 'nw': NW, 'ne': NE, 'se': SE, 'sw': SW}
 
 
 def parse_tile(tile, dirs):
-    moves = []
-    i = 0
-
-    while i < len(tile):
-        pair = tile[i:i+2]
-        if pair in ('nw', 'ne', 'sw', 'se'):
-            moves.append(dirs[pair])
-            i += 2
-        else:
-            moves.append(dirs[tile[i]])
-            i += 1
+    parsed = findall(r'(e|se|sw|w|nw|ne)', tile)
+    moves = [dirs[mv] for mv in parsed]
 
     return moves
 
@@ -57,10 +50,9 @@ def get_adjacent(x, y, z):
 
 
 def conway_hex(tiles, days, printout=False):
-    day = 1
     black, white = setup_tiles(tiles), set()
 
-    for _ in range(days):
+    for day in range(1, days+1):
         to_black = set()
         to_white = set()
         to_check = set()
@@ -87,8 +79,6 @@ def conway_hex(tiles, days, printout=False):
 
         if printout:
             print(f'Day {day}, black tiles {len(black)}')
-
-        day += 1
 
     return black
 
@@ -118,7 +108,7 @@ print("Tests...")
 tiles = test.splitlines()
 initial = setup_tiles(tiles)
 print('Flipped tiles:', len(initial))
-print('Conway Hex:', len(conway_hex(tiles, 100, False)) == 2208)
+print('Conway Hex:', len(conway_hex(tiles, 100, True)) == 2208)
 print('---------------------')
 
 with open('input', mode='r') as inp:
