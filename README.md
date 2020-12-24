@@ -31,5 +31,6 @@ Things I **L**earned, **R**evised or **I**mproved at in 2020:
 * [Day 21](21/d21.py): Set operations (**I**)
 * [Day 22](22/d22.py): Using deque (**I**) and recursion (**I**)
 * [Day 23](23/d23.py): Looped linked lists (**I**)
+* [Day 24](24/d24.py): Representing a hexagonal grid with cube coordinates(**L**) for Conway's Game of Life in Hex (**L**)
 
-As of Day 23 I have 42 stars which is my personal best. Though it seems that this year the puzzles are easier and less time-consuming than in 2019. But it still seems I improved a littl, I guess.
+As of Day 24 I have 44 stars which is my personal best. Though it seems that this year the puzzles are easier and less time-consuming than in 2019. But it seems I improved a little bit, I guess :)
