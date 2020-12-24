@@ -24,7 +24,7 @@ Things I **L**earned, **R**evised or **I**mproved at in 2020:
 * [Day 14](14/d14.py): Permutations (**R**) and bitmasks (**I**)
 * [Day 15](15/d15.py): defaultdict (**I**) and Van Eck sequence (**L**)
 * [Day 16](16/d16.py): Set operations (**I**)
-* Day 17: Missed due to other obligations :( Ideas to try later: Conway's Game of Life in 3D.
+* [Day 17](17/d17.py): Set operations (**I**) for Conway's Game of Life in 3D (**L**)
 * [Day 18](18/d18.py): Reverse Polish Notation (**R**) and the shunting-yard algorithm (**L**)
 * [Day 19](19/d19.py): Recursion (**I**) and regular expressions (**I**).
 * Day 20: Missed :( Ideas to try later: Backtracking algorithm? Find edges first, make an image border and then find edges inside?
