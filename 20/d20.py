@@ -1,3 +1,5 @@
+
+from collections import defaultdict
 import numpy as np
 import re
 
@@ -145,9 +147,10 @@ class Tile:
         self.id = parsed[0]
         self.shape = parsed[1]
         self.top, self.bottom, self.left, self.right = self._calc_borders()
+        self.adjacents = (self.adj_top, self.adj_btm, self.adj_lft, self.adj_rgt)
         
     def __str__(self):
-        state = f"Tile ID: {self.id}. Adjacents: {repr(self.adj_top)}, {repr(self.adj_btm)}, {repr(self.adj_rgt)}, {repr(self.adj_lft)}."
+        state = f"Tile ID: {self.id}. Adjacents: TOP {repr(self.adj_top)}, BOT {repr(self.adj_btm)}, RGT {repr(self.adj_rgt)}, LFT {repr(self.adj_lft)}."
         state += f'\n\n {self.shape}'
         return state
     
@@ -174,13 +177,127 @@ class Tile:
         self.top, self.bottom, self.left, self.right = self._calc_borders()
 
 
-tiles = make_tiles(test)
-for t in tiles:
-    print(t)
-    print('\n')
+def connect(A, B, side):
+    if B not in A.adjacents and A not in B.adjacents:
+        if side == 'R' and A.right == B.left:
+            print("Dla", A.id, "znalazłem dopasowanie z prawej", B.id)
+            A.adj_rgt = B
+            B.adj_lft = A
+            return True
+        elif side == 'L' and A.left == B.right  and not (A.adj_lft or B.adj_rgt):
+            print("Dla", A.id, "znalazłem dopasowanie z lewej", B.id)
+            A.adj_lft = B
+            B.adj_rgt = A
+            return True
+        elif side == 'T' and A.top == B.bottom  and not (A.adj_top or B.adj_btm):
+            print("Dla", A.id, "znalazłem dopasowanie z góry", B.id)
+            A.adj_top = B
+            B.adj_btm = A
+            return True
+        elif side == 'B' and A.bottom == B.top and not (A.adj_btm or B.adj_top):
+            print("Dla", A.id, "znalazłem dopasowanie z dołu", B.id)
+            A.adj_btm = B
+            B.adj_top = A
+            return True
+
+def find_adj(check, tiles, side):
+    for tile in tiles:
+        if check != tile:
+            if connect(check, tile, side):
+                return
+            for _ in range(3):
+                tile.rot_left()    
+                if connect(check, tile, side):
+                    return
+            tile.flip()
+            if connect(check, tile, side):
+                return
+            else:
+                for _ in range(3):
+                    tile.rot_left()    
+                    if connect(check, tile, side):
+                        return
+
+def check_connection(A, B, side):
+    if side == 'R' and A.right == B.left:
+        return True
+    elif side == 'L' and A.left == B.right:
+        return True
+    elif side == 'T' and A.top == B.bottom:
+        return True
+    elif side == 'B' and A.bottom == B.top:
+        return True
 
 
-#do zrobienia mapy użyjemy concatenate: najpierw rzędy, potem rzędy wg. axis=0
+def count_adj(check, tiles, side, edgecount):
+    for tile in tiles:
+        if check != tile:
+            if check_connection(check, tile, side):
+                edgecount[check.id] += 1
+                return
+            for _ in range(3):
+                tile.rot_left()    
+                if check_connection(check, tile, side):
+                    edgecount[check.id] += 1
+                    return
+            tile.flip()
+            if check_connection(check, tile, side):
+                edgecount[check.id] += 1
+                return
+            else:
+                for _ in range(3):
+                    tile.rot_left()    
+                    if check_connection(check, tile, side):
+                        edgecount[check.id] += 1
+                        return
+
+
+
+
+
+with open('input', mode='r') as inp:
+
+    tiles = make_tiles(inp.read())
+    edgecount = defaultdict(int)
+
+    for check in tiles:
+        print(f"Sprawdzam {check.id}")
+        for d in ("TBLR"):
+            count_adj(check, tiles, d, edgecount)
+    print(edgecount)
+    prod = 1
+    for k in edgecount:
+        if edgecount[k] == 2:
+            prod *= k
+
+    print(prod)
+
+
+'''
+1) weź T1 z listy
+2) iteruj przez wszystkie tile
+3) znaleziona 
+4) czy prawa pasuje to lewej? (ew. dół do góry, góra do dołu, lewa do prawej)
+    5) - tak: doczep T2 jako right w T1, doczep T1 jako left do T2
+    6) - nie:
+        7) > czy jest frozen? 
+            - tak: porzuć, idź to następnej
+            - nie: obróć raz w lewo i wróć do 4)
+            > czy obróciłeś 4 razy?
+                - flip i wróć do 4)
+        8) czy obróciłeś 4 razy przed i po flipie i nadal nie pasuje?
+            - tak: porzuć, idź to następnej
+    9) jak doszedłeś
+
+------
+1) weź początek mapy
+2) zakolejkuj jego adjacenty
+3) dla każdego powtórz poszukiwania tam,gdzie nie ma adjc
+4) jak liczba sprawdzonych == liczba kafli - finisz
+
+'''
+
+#do zrobienia mapy użyjemy concatenate: najpierw rzędy, potem rzędy wg. axis=0  
 #T = Tile(raw_tile)
 #T.flip()
 #T2 = Tile(raw_tile)
