@@ -16,6 +16,7 @@ def get_loop_size(public_key, subject):
             print('Looks like you need a bigger limit...')
             return -1
 
+
 def transform_key(public_key, loop_size):
     value = 1
     subject = public_key
@@ -24,6 +25,20 @@ def transform_key(public_key, loop_size):
         value %= DIVISOR
     return value
     
+
+def loop_generator(subject):
+    value = 1
+    while True:
+        value *= subject
+        value %= DIVISOR
+        yield value
+
+def get_loop_size_alt(pub_key, subject):
+    for i, candidate in enumerate(loop_generator(subject), 1):
+        if candidate == pub_key:
+            return i
+
+
 card_pub = 8987316
 door_pub = 14681524
 
@@ -31,5 +46,10 @@ card_loop = get_loop_size(card_pub, BASE_SUBJECT)
 door_loop = get_loop_size(door_pub, BASE_SUBJECT)
 encryption_key = transform_key(door_pub, card_loop)
 encryption_key_door = transform_key(card_pub, door_loop)
+print(f'METHOD 1 (naive): Encryption key {encryption_key}, encryption key (door) {encryption_key_door}. Authentication {encryption_key == encryption_key_door}.')
 
-print(f'Encryption key {encryption_key}, encryption key (door) {encryption_key_door}. Authentication {encryption_key == encryption_key_door}.')
+card_loop = get_loop_size_alt(card_pub, BASE_SUBJECT)
+door_loop = get_loop_size_alt(door_pub, BASE_SUBJECT)
+encryption_key = transform_key(door_pub, card_loop)
+encryption_key_door = transform_key(card_pub, door_loop)
+print(f'METHOD 2 (with generators): Encryption key {encryption_key}, encryption key (door) {encryption_key_door}. Authentication {encryption_key == encryption_key_door}.')
