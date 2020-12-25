@@ -50,14 +50,14 @@ def get_adjacent(x, y, z):
 
 
 def conway_hex(tiles, days, printout=False):
-    black, white = setup_tiles(tiles), set()
+    black = setup_tiles(tiles)
 
     for day in range(1, days+1):
         to_black = set()
         to_white = set()
         to_check = set()
 
-        for tile in black | white:
+        for tile in black:
             to_check.add(tile)
             to_check |= get_adjacent(*tile)
 
