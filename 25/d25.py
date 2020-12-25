@@ -50,6 +50,6 @@ print(f'METHOD 1 (naive): Encryption key {encryption_key}, encryption key (door)
 
 card_loop = get_loop_size_alt(card_pub, BASE_SUBJECT)
 door_loop = get_loop_size_alt(door_pub, BASE_SUBJECT)
-encryption_key = transform_key(door_pub, card_loop)
-encryption_key_door = transform_key(card_pub, door_loop)
+encryption_key = pow(card_pub, door_loop, DIVISOR)
+encryption_key_door = pow(card_pub, door_loop, DIVISOR)
 print(f'METHOD 2 (with generators): Encryption key {encryption_key}, encryption key (door) {encryption_key_door}. Authentication {encryption_key == encryption_key_door}.')
