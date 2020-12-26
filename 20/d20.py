@@ -10,14 +10,20 @@ NESSIE = '''                  #
 
 NESSIE_OFFSETS = [(i, j) for i in range(len(NESSIE)) for j in range(len(NESSIE[0])) if NESSIE[i][j] == '#']
 
-
 class Tile:
     def __init__(self, raw_tile):
         parsed = parse_tile(raw_tile)
         self.id = parsed[0]
         self.shape = parsed[1]
-        self.top, self.bottom, self.left, self.right = self._calc_borders()
         self.frozen = False
+        self.top, self.bottom, self.left, self.right = self._calc_borders()
+
+        self.t, self.b, self.l, self.r = self._calc_borders()
+        self.all_possible_borders = {self.t, self.b, self.l, self.r}
+        self.rot_left(2)
+        self.t, self.b, self.l, self.r = self._calc_borders()
+        self.all_possible_borders.update((self.t, self.b, self.l, self.r))
+        self.rot_left(2)
 
     def __str__(self):
         state = f"Tile ID: {self.id}."
@@ -35,8 +41,8 @@ class Tile:
         borders = (int(border, 2) for border in (top, bottom, left, right))
         return borders
 
-    def rot_left(self):
-        self.shape = np.rot90(self.shape, 1)
+    def rot_left(self, n=1):
+        self.shape = np.rot90(self.shape, n)
         self.top, self.bottom, self.left, self.right = self._calc_borders()
 
     def flip(self):
@@ -143,6 +149,16 @@ def find_corners(tiles, debug=False):
 
         if len(corners) == 4:
             return corners
+
+def find_corners_2(tiles):
+    edgecount = defaultdict(int)
+    for tile in tiles:
+        for other in tiles:
+            if tile != other and tile.all_possible_borders & other.all_possible_borders:
+                edgecount[tile.id] += 1
+    
+    corners = [tile for tile in tiles if edgecount[tile.id] == 2]
+    return corners
 
 
 def initiate_row(corners):
@@ -344,10 +360,12 @@ Tile 3079:
 ..#.......
 ..#.###...'''
 
+
 print("Tests...")
 tiles = make_tiles(test)
-corners = find_corners(tiles, debug=True)
-map_monsters = generate_map(tiles, corners)
+corners = find_corners(tiles)
+corners = find_corners_2(tiles)
+map_monsters = generate_map(tiles, find_corners_2(tiles))
 count = count_monsters(map_monsters)
 print("Corner product:", reduce(lambda a, b: a * b, [corner.id for corner in corners]) == 20899048083289)
 print("Water roughness:", calculate_roughness(map_monsters, count) == 273)
@@ -357,7 +375,7 @@ print('---------------------')
 with open('input', mode='r') as inp:
     print('Solution...')
     tiles = make_tiles(inp.read())
-    corners = find_corners(tiles, debug=False)
+    corners = find_corners_2(tiles)
     map_monsters = generate_map(tiles, corners)
     count = count_monsters(map_monsters)
     print("Corner product:", reduce(lambda a, b: a * b, [corner.id for corner in corners]))
