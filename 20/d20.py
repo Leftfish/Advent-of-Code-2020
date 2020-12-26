@@ -360,6 +360,5 @@ with open('input', mode='r') as inp:
     corners = find_corners(tiles, debug=False)
     map_monsters = generate_map(tiles, corners)
     count = count_monsters(map_monsters)
-    print("Tests...")
     print("Corner product:", reduce(lambda a, b: a * b, [corner.id for corner in corners]))
     print("Water roughness:", calculate_roughness(map_monsters, count))
