@@ -2014,15 +2014,6 @@ def generate_map(tiles, corners):
     return full_map
 
 
-
-inp = test
-tiles = make_tiles(inp)
-corners = find_corners(tiles)
-map_monsters = generate_map(tiles, corners)
-map_monsters = np.flipud(map_monsters)
-map_monsters = np.rot90(map_monsters, 3)
-print(map_monsters)
-
 def find_monsters(map_monsters):
     monster_count = 0
     for i in range(len(map_monsters)-2):
@@ -2036,22 +2027,42 @@ def find_monsters(map_monsters):
                     is_monster = False
                     break
             if is_monster:
-                print("MONSTEEEER")
+                #print("MONSTEEEER")
                 monster_count += 1
             j += 1
     return monster_count
 
-count = find_monsters(map_monsters)
-print(count)
+
+def count_monsters(map_monsters):
+    count = find_monsters(map_monsters)
+    if count == 0:
+        for _ in range(3):
+            map_monsters = np.rot90(map_monsters, 1)
+            count = find_monsters(map_monsters)
+            if count != 0:
+                return count
+        map_monsters = np.flipud(map_monsters)
+        count = find_monsters(map_monsters)
+        if count != 0:
+            return count
+        else:
+            for _ in range(3):
+                map_monsters = np.rot90(map_monsters, 1)
+                count = find_monsters(map_monsters)
+                if count != 0:
+                    return count
+        return count
+
+inp = test
+tiles = make_tiles(inp)
+corners = find_corners(tiles)
+map_monsters = generate_map(tiles, corners)
+count = count_monsters(map_monsters)
+
 
 s = 0
 for row in map_monsters:
     s += np.sum(row)
 print(s - count * 15)
 
-
-'''
-nessie offsets
-[(0, 18), (1, 0), (1, 5), (1, 6), (1, 11), (1, 12), (1, 17), (1, 18), (1, 19), (2, 1), (2, 4), (2, 7), (2, 10), (2, 13), (2, 16)]
-'''
 
