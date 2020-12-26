@@ -2,9 +2,7 @@
 
 For the third time I'm trying to find out how far I can make it in [Advent of Code](https://adventofcode.com/2020/). After tapping out in 2018 after 9 days, I decided try to beat this score in 2019 - and I did, managing to solve the first 13 days, included writing a fully functional intcode computer. Then my regular professional life won and prevented me from getting deeply involved into graph-related problems.
 
-Now it's 2020. I barely touched coding this year and with my current schedule, I thought I wouldn't have time for this kind of fun and I probably don't. 
-
-But I decided to solve some puzzles anyway!
+Now it's 2020. I barely touched coding this year and with my current schedule, I thought I wouldn't have time for this kind of fun and I probably don't. But I decided to solve some puzzles anyway!
 
 Things I **L**earned, **R**evised or **I**mproved at in 2020:
 
@@ -27,11 +25,11 @@ Things I **L**earned, **R**evised or **I**mproved at in 2020:
 * [Day 17](17/d17.py): Set operations (**I**) for Conway's Game of Life in 3D (**L**)
 * [Day 18](18/d18.py): Reverse Polish Notation (**R**) and the shunting-yard algorithm (**L**)
 * [Day 19](19/d19.py): Recursion (**I**) and regular expressions (**I**).
-* Day 20: Second star still missing. Ideas to try later: numpy array concatenation.
+* [Day 20](20/d20.py): Numpy arrays (**L**) manipulation (for what might be the least efficient solution but still took many hours).
 * [Day 21](21/d21.py): Set operations (**I**)
 * [Day 22](22/d22.py): Using deque (**I**) and recursion (**I**)
 * [Day 23](23/d23.py): Looped linked lists (**I**)
 * [Day 24](24/d24.py): Representing a hexagonal grid with cube coordinates(**L**) for Conway's Game of Life in Hex (**L**)
-* [Day 25](25/d25.py): Generators (**R**) and using pow() with mod (**L**), though neither was really necessary
+* [Day 25](25/d25.py): Generators (**R**) and using pow() with mod (**L**) for Diffie–Hellman key exchange (**L**)
 
-As of Day 25 I have 49 stars which is totally my personal best. It seems that this year the puzzles were easier and less time-consuming than in 2019. But I did improve a little bit, I guess :)
+As of Day 25 I have 50 stars which is totally my personal best. I never expected to finish the calendar when I sat down on December 1st to solve the first puzzle. It seems that this year the puzzles were easier and less time-consuming than in 2019. But I did improve a little bit, I guess :)
